@@ -1,0 +1,18 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+build:
+  artifacts:
+  - image: ghcr.io/prasanna12510/reminder-api
+deploy:
+  helm:
+    releases:
+    - name: reminder-api
+      chartPath: ./helm-chart/reminder-api
+      wait: true
+      artifactOverrides:
+        image: ghcr.io/prasanna12510/reminder-api
+      imageStrategy:
+          helm:
+            explicitRegistry: false
+      packaged:
+        appVersion: {{.IMAGE_TAG}}

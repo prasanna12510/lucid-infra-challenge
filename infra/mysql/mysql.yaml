@@ -1,0 +1,36 @@
+global:
+  storageClass: standard
+architecture: standalone
+auth:
+  rootPassword: password
+  database: 'reminder'
+  username: 'reminder_user'
+  password: 'reminder_pass'
+primary:
+  persistence:
+    enabled: true
+    storageClass: standard
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 30
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 30
+    successThreshold: 1
+    failureThreshold: 3
+  startupProbe:
+    enabled: true
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 30
+    failureThreshold: 10
+    successThreshold: 1

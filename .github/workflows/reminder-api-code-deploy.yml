@@ -1,0 +1,65 @@
+name: reminder-api-code-deploy
+on:
+  push:
+    branches: '**'
+    tags:
+      - reminder-api-*
+    paths:
+      - "reminder-service/**"
+      - "helm-chart/reminder-api/**"
+
+jobs:
+  reminder-api-image-build:
+    name: Publish - GitHub Container Registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login docker
+        run : make docker-login
+        env :
+          DOCKER_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+          DOCKER_USERNAME: ${{ secrets.REPOSITORY_ACCESS_USER }}
+
+      - name: Build docker image
+        run : |
+          export GITHUB_SHA_SHORT=`sed -e 's/^"//' -e 's/"$//' <<<"$MASTER_COMMIT_ID" | cut -c1-7`
+          echo "APP_TAG=$(echo $GITHUB_SHA_SHORT)" >> $GITHUB_ENV
+          make docker-build
+        working-directory: reminder-service
+        env:
+          MASTER_COMMIT_ID: ${{ toJson(github.sha) }}
+
+      - name: Push docker image to github container Registry
+        run : |
+          make docker-retag-push
+        env:
+          DOCKER_USERNAME: ${{ secrets.REPOSITORY_ACCESS_USER }}
+          DOCKER_REPO: reminder-api
+
+  reminder-api-deploy:
+    name: Helm lint and release
+    runs-on: ubuntu-latest
+    needs: reminder-api-image-build
+    steps:
+    - uses: actions/checkout@v2
+    - name: Helm Lint
+      uses: WyriHaximus/github-action-helm3@v2
+      with:
+        exec: helm lint ./helm-chart/reminder-api
+
+    - uses: actions/checkout@v1
+    - name: Prep helm chart
+      run: |
+        mv ./helm-chart/reminder-api/Chart.yaml ./helm-chart/reminder-api/Chart.old.yaml &&
+        cat ./helm-chart/reminder-api/Chart.old.yaml | grep -v appVersion > ./helm-chart/reminder-api/Chart.yaml &&
+        export GITHUB_SHA_SHORT=`sed -e 's/^"//' -e 's/"$//' <<<"$MASTER_COMMIT_ID" | cut -c1-7` &&
+        echo "APP_TAG=$(echo $GITHUB_SHA_SHORT)" >> $GITHUB_ENV &&
+        echo -e "\r\nappVersion: ${APP_TAG}\r\n" >> ./helm-chart/reminder-api/Chart.yaml &&
+        cat ./helm-chart/reminder-api/Chart.yaml
+      env:
+        MASTER_COMMIT_ID: ${{ toJson(github.sha) }}
+
+    - name: Helm install
+      uses: WyriHaximus/github-action-helm3@v2
+      with:
+        exec: helm upgrade --install reminder-api --namespace=reminder-api ./helm-chart/reminder-api --set image.tag=${APP_TAG}
+        kubeconfig: '${{ secrets.KUBECONFIG }}'

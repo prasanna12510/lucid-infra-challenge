@@ -1,0 +1,17 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+metadata:
+  name: mysql
+deploy:
+  helm:
+    flags:
+      global:
+        - --debug
+    releases:
+      - name: mysql
+        remoteChart: https://charts.bitnami.com/bitnami/mysql-8.8.14.tgz
+        upgradeOnChange: true
+        createNamespace: true
+        namespace: mysql
+        valuesFiles:
+          - mysql.yaml

@@ -1,7 +1,7 @@
 nameOverride: ""
 fullnameOverride: ""
 
-
+#set the replica count
 replicaCount: 1
 
 image:

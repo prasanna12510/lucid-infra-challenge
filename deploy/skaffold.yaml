@@ -5,9 +5,12 @@ build:
   - image: ghcr.io/prasanna12510/reminder-api
 deploy:
   helm:
+    flags:
+      global:
+        - --debug
     releases:
     - name: reminder-api
-      chartPath: ./helm-chart/reminder-api
+      chartPath: ../helm-chart/reminder-api
       wait: true
       artifactOverrides:
         image: ghcr.io/prasanna12510/reminder-api
@@ -15,4 +18,4 @@ deploy:
           helm:
             explicitRegistry: false
       packaged:
-        appVersion: {{.IMAGE_TAG}}
+        appVersion: "{{ .IMAGE_TAG }}"

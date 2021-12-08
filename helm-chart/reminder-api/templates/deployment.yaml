@@ -5,12 +5,7 @@ metadata:
   labels:
     {{- include "reminder-api.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
-  {{- if .Values.autoscaling.enabled }}
-  serviceName: {{ include "reminder-api.fullname" . }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "reminder-api.selectorLabels" . | nindent 6 }}
@@ -41,15 +36,15 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
-          envFrom:
-          - secretRef:
-              name: {{ include "reminder-api.fullname" . }}-mysql-secret
           {{- if .Values.env }}
           {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
           {{- end }}
+          envFrom:
+          - secretRef:
+              name: {{ include "reminder-api.fullname" . }}-mysql-secret
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}

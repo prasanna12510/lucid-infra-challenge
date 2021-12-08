@@ -17,7 +17,7 @@ docker-login: docker-login-check
 
 .PHONY: docker-build
 docker-build: docker-login
-	docker build --file ./web-app/Dockerfile --tag ghcr.io/$(DOCKER_USERNAME)/$(DOCKER_REPO):$(APP_TAG) ./web-app
+	docker build --file ./reminder-service/Dockerfile --tag ghcr.io/$(DOCKER_USERNAME)/$(DOCKER_REPO):$(APP_TAG) ./reminder-service
 
 
 .PHONY: docker-retag-push

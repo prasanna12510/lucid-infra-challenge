@@ -24,8 +24,8 @@ jobs:
         run : |
           export GITHUB_SHA_SHORT=`sed -e 's/^"//' -e 's/"$//' <<<"$MASTER_COMMIT_ID" | cut -c1-7`
           echo "APP_TAG=$(echo $GITHUB_SHA_SHORT)" >> $GITHUB_ENV
-          docker build --file ./reminder-service/Dockerfile -t ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:${GITHUB_SHA_SHORT} ./reminder-service
-
+          docker build -t ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:${GITHUB_SHA_SHORT} .
+        working-directory: reminder-service
         env:
           MASTER_COMMIT_ID: ${{ toJson(github.sha) }}
           DOCKER_USERNAME: ${{ secrets.REPOSITORY_ACCESS_USER }}

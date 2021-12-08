@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/prasanna12510/reminder-api
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
@@ -20,6 +20,7 @@ mysql:
   password: reminder_pass
   database: reminder
 
+#image pull secrets
 imagePullSecrets:
   - name: dockerconfigjson-github-com
 

@@ -15,8 +15,7 @@ jobs:
     steps:
       - name: Login docker
         run : |
-          echo ls -al
-          make docker-login
+          docker login ghcr.io --username ${DOCKER_USERNAME} -p ${DOCKER_TOKEN} 2>/dev/null
         env :
           DOCKER_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
           DOCKER_USERNAME: ${{ secrets.REPOSITORY_ACCESS_USER }}
@@ -25,13 +24,17 @@ jobs:
         run : |
           export GITHUB_SHA_SHORT=`sed -e 's/^"//' -e 's/"$//' <<<"$MASTER_COMMIT_ID" | cut -c1-7`
           echo "APP_TAG=$(echo $GITHUB_SHA_SHORT)" >> $GITHUB_ENV
-          make docker-build
+          docker build --file ./reminder-service/Dockerfile --tag ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:${APP_TAG} ./reminder-service
+
         env:
           MASTER_COMMIT_ID: ${{ toJson(github.sha) }}
+          DOCKER_USERNAME: ${{ secrets.REPOSITORY_ACCESS_USER }}
+          DOCKER_REPO: reminder-api
 
       - name: Push docker image to github container Registry
         run : |
-          make docker-retag-push
+          docker tag ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:latest ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:${APP_TAG}
+          docker push ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:${APP_TAG}
         env:
           DOCKER_USERNAME: ${{ secrets.REPOSITORY_ACCESS_USER }}
           DOCKER_REPO: reminder-api

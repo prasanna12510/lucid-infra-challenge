@@ -14,6 +14,7 @@ env:
   DB_HOST: mysql.mysql.svc.cluster.local #internal k8s domain name
   DB_PORT: 3306
 
+#sets mysql env variable
 mysql:
   username: reminder_user
   password: reminder_pass

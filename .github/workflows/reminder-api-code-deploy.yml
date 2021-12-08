@@ -24,7 +24,7 @@ jobs:
         run : |
           export GITHUB_SHA_SHORT=`sed -e 's/^"//' -e 's/"$//' <<<"$MASTER_COMMIT_ID" | cut -c1-7`
           echo "APP_TAG=$(echo $GITHUB_SHA_SHORT)" >> $GITHUB_ENV
-          docker build --file ./reminder-service/Dockerfile --tag ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:${APP_TAG} ./reminder-service
+          docker build --file ./reminder-service/Dockerfile -t ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:${GITHUB_SHA_SHORT} ./reminder-service
 
         env:
           MASTER_COMMIT_ID: ${{ toJson(github.sha) }}
@@ -33,8 +33,7 @@ jobs:
 
       - name: Push docker image to github container Registry
         run : |
-          docker tag ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:latest ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:${APP_TAG}
-          docker push ghcr.io/${DOCKER_USERNAME}/${DOCKER_REPO}:${APP_TAG}
+          docker push ghcr.io/$DOCKER_USERNAME/$DOCKER_REPO:$APP_TAG
         env:
           DOCKER_USERNAME: ${{ secrets.REPOSITORY_ACCESS_USER }}
           DOCKER_REPO: reminder-api

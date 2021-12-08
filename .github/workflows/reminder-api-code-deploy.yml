@@ -13,13 +13,13 @@ jobs:
     name: Publish - GitHub Container Registry
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Login docker
         run : |
           docker login ghcr.io --username ${DOCKER_USERNAME} -p ${DOCKER_TOKEN} 2>/dev/null
         env :
           DOCKER_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
           DOCKER_USERNAME: ${{ secrets.REPOSITORY_ACCESS_USER }}
-
       - name: Build docker image
         run : |
           export GITHUB_SHA_SHORT=`sed -e 's/^"//' -e 's/"$//' <<<"$MASTER_COMMIT_ID" | cut -c1-7`

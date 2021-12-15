@@ -29,7 +29,7 @@ The API can only be used if the proper database and schemas are set. This can be
    `kubectl run -it --rm --image=mysql --restart=Never mysql-client -- mysql --host mysql.mysql.svc --password=<super-secret-password>`
    make sure to enter the (decoded) password specified in the `kubectl get secrets/reminder-api-mysql-secret --template={{.data.password}} | base64 -D`
 2. Create the database schema from infra/mysql
-    1. `mysql -hmysql.mysql.svc -uusername -pdatabase_name < db.sql`
+    1. `mysql -hmysql.mysql.svc -uusername -ppassword database_name < db.sql`
 
 ## Expose K8s API for GitHub Actions
 1. port-forward k8s api

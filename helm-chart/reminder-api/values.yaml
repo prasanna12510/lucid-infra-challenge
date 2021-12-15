@@ -37,6 +37,11 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+
+ingress:
+  enabled: true
+  path: /
+
 # ensure the exposed docker port is exposed via service
 service:
   type: NodePort

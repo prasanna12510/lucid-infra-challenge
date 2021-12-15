@@ -9,6 +9,7 @@ deploy:
         - --debug
     releases:
       - name: mysql
+        wait: true
         remoteChart: https://charts.bitnami.com/bitnami/mysql-8.8.14.tgz
         upgradeOnChange: true
         createNamespace: true

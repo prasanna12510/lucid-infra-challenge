@@ -14,22 +14,22 @@ primary:
       - ReadWriteOnce
     size: 8Gi
   livenessProbe:
-    enabled: true
+    enabled: false
     initialDelaySeconds: 120
     periodSeconds: 30
     timeoutSeconds: 30
     successThreshold: 1
     failureThreshold: 3
   readinessProbe:
-    enabled: true
+    enabled: false
     initialDelaySeconds: 120
     periodSeconds: 30
     timeoutSeconds: 30
     successThreshold: 1
     failureThreshold: 3
   startupProbe:
-    enabled: true
-    initialDelaySeconds: 120
+    enabled: false
+    initialDelaySeconds: 300
     periodSeconds: 30
     timeoutSeconds: 30
     failureThreshold: 10

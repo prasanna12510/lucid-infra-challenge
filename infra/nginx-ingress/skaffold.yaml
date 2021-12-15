@@ -1,0 +1,18 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+metadata:
+  name: nginx-ingress
+deploy:
+  helm:
+    flags:
+      global:
+        - --debug
+    releases:
+      - name: nginx-ingress
+        remoteChart: https://github.com/kubernetes/ingress-nginx/releases/download/helm-chart-4.0.13/ingress-nginx-4.0.13.tgz
+        wait: true
+        upgradeOnChange: true
+        createNamespace: true
+        namespace: nginx-ingress
+        valuesFiles:
+          - nginx_ingress.yaml
